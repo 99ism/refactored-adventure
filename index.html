@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Repeat Desain Bordir</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f4f4f9;
+      color: #333;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      transition: all 0.3s ease;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .info {
+      background: #e9f5ff;
+      border-left: 4px solid #0077cc;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      padding: 6px;
+      width: 100%;
+      margin-top: 4px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    .toggle-btn {
+      float: right;
+      margin-top: -10px;
+      margin-right: -10px;
+      background: #444;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 6px;
+      text-align: center;
+    }
+    /* Dark Mode */
+    body.dark {
+      background: #1e1e1e;
+      color: #ddd;
+      border-color: #555;
+    }
+    body.dark .info {
+      background: #2a2a2a;
+      border-left-color: #66aaff;
+    }
+    body.dark .output {
+      background: #2b2b2b;
+      border-color: #555;
+    }
+    body.dark input {
+      background: #333;
+      color: #ddd;
+      border-color: #555;
+    }
+    body.dark table, 
+    body.dark th, 
+    body.dark td {
+      border-color: #555;
+    }
+    body.dark button {
+      background: #66aaff;
+      color: black;
+    }
+    body.dark button:hover {
+      background: #3388dd;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleTheme()">🌙/☀️</button>
+  <h1>Kalkulator Repeat Desain Bordir</h1>
+  <div class="info">
+    <p><b>Informasi Umum:</b></p>
+    <ul>
+      <li>Area Bordir per Kepala Mesin: <b>251.2 mm x 502.5 mm</b></li>
+      <li>Titik 0: kanan bawah (mutlak)</li>
+      <li>X max: -251.2 mm, Y max: 502.5 mm</li>
+      <li>Step X dan Y minimal: <b>4 mm</b> (area gunting)</li>
+      <li>Step mesin bordir: <b>1 mm max</b></li>
+    </ul>
+  </div>
+
+  <h2>Input Desain</h2>
+  <label for="lebar">Lebar desain (mm):</label>
+  <input type="number" id="lebar" placeholder="contoh: 40">
+
+  <label for="tinggi">Tinggi desain (mm):</label>
+  <input type="number" id="tinggi" placeholder="contoh: 50">
+
+  <button onclick="hitung()">Hitung Repeat</button>
+
+  <div class="output" id="hasil"></div>
+
+  <script>
+    function hitung() {
+      const areaX = 251.2;
+      const areaY = 502.5;
+      const step = 4; // minimal step 4 mm
+
+      const lebar = parseFloat(document.getElementById('lebar').value);
+      const tinggi = parseFloat(document.getElementById('tinggi').value);
+
+      if (isNaN(lebar) || isNaN(tinggi) || lebar <= 0 || tinggi <= 0) {
+        document.getElementById('hasil').innerHTML = "<p style='color:red'>Masukkan lebar dan tinggi yang valid!</p>";
+        return;
+      }
+
+      const lebarStep = lebar + step;
+      const tinggiStep = tinggi + step;
+
+      const repeatX = Math.floor(areaX / lebarStep);
+      const repeatY = Math.floor(areaY / tinggiStep);
+
+      const xInterval = -lebarStep;
+      const yInterval = tinggiStep;
+
+      let output = `
+        <h3>Hasil Perhitungan:</h3>
+        <p>X-INTERVAL: <b>${xInterval.toFixed(2)} mm</b></p>
+        <p>Y-INTERVAL: <b>${yInterval.toFixed(2)} mm</b></p>
+        <p>X-REPS: <b>${repeatX}</b></p>
+        <p>Y-REPS: <b>${repeatY}</b></p>
+      `;
+
+      // generate tabel koordinat
+      output += `
+        <h3>Koordinat Repeat</h3>
+        <table>
+          <tr><th>Index</th><th>X</th><th>Y</th></tr>
+      `;
+
+      let idx = 1;
+      for (let y = 0; y < repeatY; y++) {
+        for (let x = 0; x < repeatX; x++) {
+          const posX = xInterval * (x + 1);
+          const posY = yInterval * (y + 1);
+          output += `<tr><td>${idx}</td><td>${posX.toFixed(2)}</td><td>${posY.toFixed(2)}</td></tr>`;
+          idx++;
+        }
+      }
+      output += `</table>`;
+
+      document.getElementById('hasil').innerHTML = output;
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>
